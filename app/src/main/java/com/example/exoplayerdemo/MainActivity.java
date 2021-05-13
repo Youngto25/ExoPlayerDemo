@@ -20,9 +20,14 @@ import android.view.WindowManager;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.ui.StyledPlayerControlView;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.exoplayer2.video.VideoListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -30,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = "MainActivity";
     private View decorView;
     private SimpleExoPlayer player;
-    private PlayerView playerView;
+    private StyledPlayerView playerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private void getPermission() {
         setContentView(R.layout.activity_main);
 
-        playerView = (PlayerView) findViewById(R.id.player_view);
+        playerView = (StyledPlayerView) findViewById(R.id.player_view);
 
         //测试访问用户权限
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -80,6 +85,17 @@ public class MainActivity extends AppCompatActivity {
     private void playVideo() {
         player = new SimpleExoPlayer.Builder(this).build();
 
+        String h = "https://vfx.mtime.cn/Video/2019/07/12/mp4/190712140656051701.mp4"; //需横屏
+        String f = "file:///storage/emulated/0/DCIM/Camera/8437bdd7663961c4fadbc7f7f6e07acd.mp4"; //无需横屏
+        List<String> list = new ArrayList<>();
+        list.add(h);
+        list.add(f);
+
+        for(String vo:list){
+            MediaItem item = MediaItem.fromUri(vo);
+            player.addMediaItem(item);
+        }
+
         player.addListener(new Player.EventListener() {
             @Override
             public void onIsLoadingChanged(boolean isLoading) {
@@ -101,6 +117,12 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "onPlaybackStateChanged" + "结束");
                 }
             }
+
+            @Override
+            public void onMediaItemTransition(
+                    @Nullable MediaItem mediaItem, @Player.MediaItemTransitionReason int reason) {
+                Log.d(TAG, "onMediaItemTransition 播放下一个" + reason);
+            }
         });
 
         player.addVideoListener(new VideoListener() {
@@ -120,14 +142,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         });
-        String h = "https://vfx.mtime.cn/Video/2019/07/12/mp4/190712140656051701.mp4"; //需横屏
-        String f = "file:///storage/emulated/0/DCIM/Camera/8437bdd7663961c4fadbc7f7f6e07acd.mp4"; //无需横屏
-        Uri videoUri = Uri.parse(h);
-//        Uri videoUri = Uri.parse(f);
+
         // Build the media item.
-        MediaItem mediaItem = MediaItem.fromUri(videoUri);
+//        MediaItem mediaItem = MediaItem.fromUri(videoUri);
         // Set the media item to be played.
-        player.setMediaItem(mediaItem);
+//        player.setMediaItem(mediaItem);
 
         playerView.setPlayer(player);
 

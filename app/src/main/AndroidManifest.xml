@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ExoPlayerDemo">
-        <activity android:name=".MainActivity" android:theme="@style/ActivityTransparentTheme" >
+        <activity android:name=".MainActivity" android:theme="@style/ActivityTransparentTheme" android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
